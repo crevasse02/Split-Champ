@@ -5,7 +5,6 @@ date_default_timezone_set('Asia/Jakarta');
 @extends('layout.app')
 @section('content')
     <main id="main" class="main">
-
         <div class="pagetitle">
             <h1>Create Experiment</h1>
             <nav style="--bs-breadcrumb-divider: '|';">
@@ -20,7 +19,6 @@ date_default_timezone_set('Asia/Jakarta');
                 <!-- Left side columns -->
                 <div class="col-lg-12">
                     <div class="row">
-
                         <!-- Form Variant Add -->
                         <div class="col-12">
                             <div class="card">
@@ -34,8 +32,8 @@ date_default_timezone_set('Asia/Jakarta');
                                         <div class="col-md-4">
                                             <label for="time-stamp" class="form-label">Domain</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" aria-label="time-stamp"
-                                                    aria-describedby="basic-addon1" id="time-stamp">
+                                                <input type="text" class="form-control" aria-label="domain-name"
+                                                    aria-describedby="basic-addon1" id="domain-name">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -52,7 +50,7 @@ date_default_timezone_set('Asia/Jakarta');
                                             </div>
                                         </div>
                                         <div class="col-md-12 text-end">
-                                            <button type="button"
+                                            <button id="create-experimen" type="button"
                                                 class="btn btn-primary rounded-pill bgc-primary">Submit</button>
                                         </div>
                                 </div>

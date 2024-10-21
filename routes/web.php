@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\experimentController;
+use App\Http\Controllers\variantController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -18,13 +19,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('dashboard');
 });
-Route::get('/form-variant', function () {
-    return view('form-variant');
-});
+
 Route::get('/login', function () {
     return view('login');
 });
 Route::get('/register', function () {
     return view('register');
 });
+
+// Experimen Controller Routes
 Route::get('/create-experiment', [experimentController::class, 'index']);
+Route::post('/store-experiment', [experimentController::class, 'store']);
+
+// Variant Controllers Routes
+Route::get('/form-variant', [variantController::class, 'index']);

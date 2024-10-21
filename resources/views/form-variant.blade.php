@@ -1,7 +1,6 @@
 @extends('layout.app')
 @section('content')
     <main id="main" class="main">
-
         <div class="pagetitle">
             <h1>Campaign</h1>
             <nav style="--bs-breadcrumb-divider: '|';">
@@ -11,14 +10,11 @@
                 </ol>
             </nav>
         </div><!-- End Page Title -->
-
         <section class="section dashboard">
             <div class="row">
-
                 <!-- Left side columns -->
                 <div class="col-lg-12">
                     <div class="row">
-
                         <!-- Form Variant Add -->
                         <div class="col-12">
                             <div class="card">
@@ -26,12 +22,18 @@
                                     <!-- Multi Columns Form -->
                                     <form class="row g-3 pt-3">
                                         <div class="col-md-12">
-                                            <label for="inputName5" class="form-label">Nama Eksperimen</label>
-                                            <input type="text" class="form-control" id="nama_eksperimen">
+                                            <label for="nama_eksperimen" class="form-label">Nama Eksperimen</label>
+                                            <select class="form-control" id="nama_eksperimen" name="nama_eksperimen">
+                                                <option value="">Select Experimen</option>
+                                                @foreach ($data as $experiment)
+                                                    <option value="{{ $experiment['id'] }}">
+                                                        {{ $experiment['eksperimen_name'] }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="inputEmail5" class="form-label">URL</label>
-                                            <input type="email" class="form-control" id="url">
+                                            <label for="url" class="form-label">URL</label>
+                                            <input type="text" class="form-control" id="url">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="inputPassword5" class="form-label">Variant</label>
@@ -41,10 +43,6 @@
                                             </div>
                                         </div>
 
-                                        <div class="d-grid gap-2 mt-3">
-                                            <button class="btn btn-primary bgc-primary" type="button">Add Variant <i
-                                                    class="bi bi-plus-circle-fill" id="add-variant"></i></button>
-                                        </div>
                                     </form><!-- End Multi Columns Form -->
 
                                     <h3 class="text-primary my-4">Conversion</h3>
@@ -52,39 +50,29 @@
                                         <div class="col-md-12">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="gridRadios"
-                                                    id="gridRadios1" value="option1" checked="">
+                                                    id="button-type" value="button-type" checked="">
                                                 <div>
-                                                    <label for="inputName5" class="form-label">Your Name</label>
-                                                    <input type="text" class="form-control" id="inputName5"
-                                                        placeholder="Masukan classname tombol">
+                                                    <label for="button-click" class="form-label">Button Click</label>
+                                                    <input type="text" class="form-control" id="button-click"
+                                                        placeholder="Insert Classname Button">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="gridRadios"
-                                                    id="gridRadios1" value="option1">
+                                                    id="form" value="form">
                                                 <div>
-                                                    <label for="inputName5" class="form-label">Your Name</label>
-                                                    <input type="text" class="form-control" id="inputName5"
-                                                        placeholder="Masukan URL">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="gridRadios"
-                                                    id="gridRadios1" value="option1">
-                                                <div>
-                                                    <label for="inputName5" class="form-label">Your Name</label>
-                                                    <input type="text" class="form-control" id="inputName5"
-                                                        placeholder="Masukan form id">
+                                                    <label for="form-id" class="form-label">Submit Form</label>
+                                                    <input type="text" class="form-control" id="form-id"
+                                                        placeholder="Insert Submit Form ID">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-12 text-end">
-                                            <button type="button"
-                                                class="btn btn-primary rounded-pill bgc-primary">Primary</button>
+                                            <button type="button" id="add-variant"
+                                                class="btn btn-primary rounded-pill bgc-primary">Add
+                                                Variant</button>
                                         </div>
                                     </form><!-- End Multi Columns Form -->
                                 </div>
@@ -93,6 +81,5 @@
                     </div>
                 </div>
         </section>
-
     </main><!-- End #main -->
 @endsection

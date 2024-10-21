@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('eksperimen', function (Blueprint $table) {
-            $table->id('eksperimen_id');
-            $table->string('eksperimen_name');
-            $table->string('domain_name');
-            $table->string('created_by');
+        Schema::create('variant_tabel', function (Blueprint $table) {
+            $table->id('variant_id');
+            $table->unsignedBigInteger('eksperimen_id');
+            $table->string('url_variant');
+            $table->string('conversion_type');
+            $table->integer('button_click');
+            $table->integer('form_submit');
+            $table->integer('view');
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });
@@ -27,7 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('eksperimen');
+        Schema::dropIfExists('variant_tabel');
     }
 };
