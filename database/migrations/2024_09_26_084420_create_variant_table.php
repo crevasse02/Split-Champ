@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('variant_tabel', function (Blueprint $table) {
-            $table->id('variant_id');
-            $table->unsignedBigInteger('eksperimen_id');
+            $table->uuid('variant_id')->primary();
+            $table->uuid('eksperimen_id');
             $table->string('url_variant');
+            $table->string('variant_name');
             $table->string('conversion_type');
-            $table->integer('button_click');
-            $table->integer('form_submit');
-            $table->integer('view');
+            $table->integer('button_click')->nullable(true);
+            $table->string('button_click_name')->nullable(true);
+            $table->integer('form_submit')->nullable(true);
+            $table->string('submit_form_name')->nullable(true);
+            $table->integer('view')->nullable(true);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\experimentController;
+use App\Http\Controllers\generateController;
+use App\Http\Controllers\variantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +20,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/store-experiment', [experimentController::class, 'store'])->name('store-experiment');
+
+// Variant Controllers Routes
+Route::post('/store-variant', [variantController::class, 'store'])->name('store-variant');
+Route::post('/check-variant-count', [variantController::class, 'checkVariantCount']);
+
+// Generate code Controllers Routes
+Route::delete('/experiment/{id}', [generateController::class, 'destroy'])->name('experiment.destroy');
+Route::put('/update-variants/{id}', [generateController::class, 'update']);

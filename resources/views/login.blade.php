@@ -1,6 +1,11 @@
 @extends('layout.auth')
 @section('content')
     <main>
+        @if (session('message'))
+            <div class="alert alert-info">
+                {{ session('message') }}
+            </div>
+        @endif
         <div class="container">
 
             <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
@@ -17,24 +22,32 @@
                                         <p class="text-center small">Enter your username & password to login</p>
                                     </div>
 
-                                    <form class="row g-3 needs-validation" novalidate>
-
+                                    <form class="row g-3 needs-validation" action="{{ route('login-process') }}" novalidate
+                                        method="POST">
+                                        @csrf
                                         <div class="col-12">
                                             <div class="input-group">
                                                 <span class="input-group-text login-icon" id="basic-addon1"><i
                                                         class="bi bi-envelope"></i></span>
-                                                <input type="text" class="form-control" placeholder="Your Email"
-                                                    aria-label="Your Email" aria-describedby="basic-addon1">
+                                                <input name="email" type="text" class="form-control"
+                                                    placeholder="Your Email" aria-label="Your Email"
+                                                    aria-describedby="basic-addon1">
                                             </div>
+                                            @error('email')
+                                                <small style="color: red">{{ $message }}</small>
+                                            @enderror
                                         </div>
-
                                         <div class="col-12">
                                             <div class="input-group">
                                                 <span class="input-group-text login-icon" id="basic-addon1"><i
                                                         class="bi bi-lock"></i></span>
-                                                <input type="password" class="form-control" placeholder="Your Password"
-                                                    aria-label="Your Password" aria-describedby="basic-addon1">
+                                                <input name="password" type="password" class="form-control"
+                                                    placeholder="Your Password" aria-label="Your Password"
+                                                    aria-describedby="basic-addon1">
                                             </div>
+                                            @error('password')
+                                                <small style="color: red">{{ $message }}</small>
+                                            @enderror
                                         </div>
 
                                         <div class="col-12 login-flex">
@@ -48,11 +61,11 @@
                                             </div>
                                         </div>
                                         <div class="col-12 text-center">
-                                            <button type="button" class="btn btn-primary rounded-pill bgc-primary">Sign
+                                            <button type="submit" class="btn btn-primary rounded-pill bgc-primary">Sign
                                                 in</button>
                                         </div>
                                         <div class="col-12 text-center">
-                                            <p class="small mb-0">Don't have account? <a href="pages-register.html">Create
+                                            <p class="small mb-0">Don't have account? <a href="{{ route('register') }}">Create
                                                     an account</a></p>
                                         </div>
                                     </form>
@@ -67,5 +80,15 @@
             </section>
 
         </div>
+
+        @if ($message = Session::get('failed'))
+            <script>
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "{{ $message }}",
+                });
+            </script>
+        @endif
     </main><!-- End #main -->
 @endsection

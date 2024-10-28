@@ -1252,3 +1252,31 @@ h6 {
     font-weight: bold;
     color: #238ece !important;
 }
+
+/* Extras */
+button:disabled,
+input:disabled {
+    background-color: #d3d3d3 !important; /* Light gray background */
+    color: gray !important; /* Gray text */
+    cursor: not-allowed  !important; /* Change cursor to indicate disabled state */
+    border: 1px solid #ccc  !important; /* Optional: border color */
+}
+
+::-webkit-scrollbar {
+    width: 12px;               /* Width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;  
+    background-color: transparent;       
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;    /* Scrollbar handle (thumb) color */
+    border-radius: 10px;       /* Rounded corners */
+    border: 3px solid #f1f1f1; /* Padding around the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;    /* Thumb color on hover */
+}

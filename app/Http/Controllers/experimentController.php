@@ -17,6 +17,7 @@ class experimentController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         try {
             // Validasi input
             $validated = $request->validate([

@@ -24,35 +24,39 @@ date_default_timezone_set('Asia/Jakarta');
                             <div class="card">
                                 <div class="card-body">
                                     <!-- Multi Columns Form -->
-                                    <form class="row g-3 pt-3">
+                                    <form class="row g-3 pt-3" id="formExperiment" novalidate>
+                                        <input type="hidden" id="_token" value="{{ csrf_token() }}">
                                         <div class="col-md-12">
                                             <label for="inputName5" class="form-label">Experiment Name</label>
-                                            <input type="text" class="form-control" id="experiment-name">
+                                            <input name="eksperimen_name" type="text" class="form-control"
+                                                id="eksperimen-name" required>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="time-stamp" class="form-label">Domain</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" aria-label="domain-name"
-                                                    aria-describedby="basic-addon1" id="domain-name">
+                                                <input name="domain_name" type="text" class="form-control"
+                                                    aria-label="domain-name" aria-describedby="basic-addon1"
+                                                    id="domain-name" required>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="created-by" class="form-label">Created By</label>
-                                            <input disabled type="text" class="form-control" id="created-by"
-                                                value="Hecky Riadi">
+                                            <input name="created_by" readonly type="text" class="form-control"
+                                                id="created-by" value="Hecky Riadi">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="time-stamp" class="form-label">Time Stamp</label>
                                             <div class="input-group">
-                                                <input type="text" disabled class="form-control" aria-label="time-stamp"
-                                                    aria-describedby="basic-addon1" id="time-stamp"
+                                                <input name="time_stamp" readonly type="text" class="form-control"
+                                                    aria-label="time-stamp" aria-describedby="basic-addon1" id="time-stamp"
                                                     value="<?= date('Y-m-d H:i:s') ?>">
                                             </div>
                                         </div>
                                         <div class="col-md-12 text-end">
-                                            <button id="create-experimen" type="button"
+                                            <button id="create-experimen" type="submit"
                                                 class="btn btn-primary rounded-pill bgc-primary">Submit</button>
                                         </div>
+                                    </form>
                                 </div>
                             </div><!-- End Form Variant Add -->
                         </div>
@@ -60,4 +64,40 @@ date_default_timezone_set('Asia/Jakarta');
                 </div>
         </section>
     </main>
+    <script>
+        $(document).ready(function() {
+            $('#formExperiment').on('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                var form = $('#formExperiment')[0]; // Get the form element
+                var formData = new FormData(form); // Create FormData object
+                var csrfToken = $('#_token').val();
+                // Send form data using jQuery.ajax
+                $.ajax({
+                    url: "/api/store-experiment",
+                    type: 'POST',
+                    data: formData,
+                    contentType: false, // Necessary for FormData object
+                    processData: false, // Necessary for FormData object
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken // Include CSRF token from hidden input
+                    },
+                    success: function(response) {
+                        $('#eksperimen-name').val('');
+                        $('#domain-name').val('');
+                        Swal.fire({
+                            icon: "success",
+                            title: "Success",
+                            text: response.message,
+                        });
+
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error:', textStatus, errorThrown); // Log any errors
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
