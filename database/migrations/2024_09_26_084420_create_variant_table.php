@@ -17,11 +17,11 @@ return new class extends Migration
             $table->string('url_variant');
             $table->string('variant_name');
             $table->string('conversion_type');
-            $table->integer('button_click')->nullable(true);
+            $table->integer('button_click')->default(0); 
             $table->string('button_click_name')->nullable(true);
-            $table->integer('form_submit')->nullable(true);
+            $table->integer('form_submit')->default(0); 
             $table->string('submit_form_name')->nullable(true);
-            $table->integer('view')->nullable(true);
+            $table->integer('view')->default(0);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });

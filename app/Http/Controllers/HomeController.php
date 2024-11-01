@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExperimentModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -9,7 +10,10 @@ class HomeController extends Controller
 {
     //
     public function index(){
-        return view('dashboard');
+        $dataExperiment = ExperimentModel::paginate(10);
+        return view('dashboard')->with([
+            'dataExperiment' => $dataExperiment,
+        ]);
     }
 
     public function logout(Request $request)

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\experimentController;
 use App\Http\Controllers\generateController;
+use App\Http\Controllers\trackerController;
 use App\Http\Controllers\variantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,3 +31,6 @@ Route::post('/check-variant-count', [variantController::class, 'checkVariantCoun
 // Generate code Controllers Routes
 Route::delete('/experiment/{id}', [generateController::class, 'destroy'])->name('experiment.destroy');
 Route::put('/update-variants/{id}', [generateController::class, 'update']);
+
+
+

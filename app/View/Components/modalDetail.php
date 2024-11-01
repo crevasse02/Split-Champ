@@ -8,17 +8,17 @@ use Illuminate\View\Component;
 
 class modalDetail extends Component
 {
-    public $id;
-    public $title; 
-    public $variantList; 
-    public $experimentData; 
+    // public $id;
+    // public $title; 
+    // public $variantList; 
+    // public $experimentData; 
 
-    public function __construct($id, $title, $experimentData, $variantList)
+    public function __construct()
     {
-        $this->id = $id;
-        $this->title = $title;
-        $this->variantList = $variantList;
-        $this->experimentData = $experimentData;
+        // $this->id = $id;
+        // $this->title = $title;
+        // $this->variantList = $variantList;
+        // $this->experimentData = $experimentData;
     }
 
     /**

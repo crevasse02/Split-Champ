@@ -5,6 +5,7 @@ use App\Http\Controllers\generateController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TrackerController;
 use App\Http\Controllers\variantController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +20,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+// API
+Route::post('/tracker-api', [TrackerController::class, 'tracker']);
+Route::post('/view-api', [TrackerController::class, 'view']);
 
 
 Route::group(['middleware' => 'auth'], function () {
@@ -40,4 +43,10 @@ Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::post('/login-process', [LoginController::class, 'login_process'])->name('login-process');
 Route::post('/register', [RegisterController::class, 'registerForm']);
+
+Route::fallback(function () {
+    return redirect('/'); // Redirect to homepage or any other route
+    // Alternatively, show a 404 page
+    // return response()->view('errors.404', [], 404);
+});
 

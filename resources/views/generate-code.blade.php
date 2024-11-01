@@ -43,24 +43,26 @@ date_default_timezone_set('Asia/Jakarta');
                                         <td>{{ $experiment['created_at'] }}</td>
                                         <td>
 
-                                            <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                                data-target="#modal{{ $experiment['eksperimen_id'] }}">Generate</button>
-
+                                            <button type="button" class="btn btn-primary btn-sm openModalBtn"
+                                                data-toggle="modal" data-target="#modalDetail"
+                                                data-experiment="{{ $experiment }}"
+                                                data-variant-list="{{ json_encode($dataVariant->where('eksperimen_id', $experiment['eksperimen_id'])->values()) }}">
+                                                Details
+                                            </button>
                                             <form id="delete-form-{{ $experiment['eksperimen_id'] }}"
                                                 action="{{ route('experiment.destroy', $experiment['eksperimen_id']) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm"
+                                                <button type="button" class="btn btn-danger btn-sm "
                                                     onclick="confirmDelete('{{ $experiment['eksperimen_id'] }}')">Delete</button>
                                             </form>
                                         </td>
                                     </tr>
-                                    <x-modal-detail id="modal{{ $experiment['eksperimen_id'] }}"
-                                        title="Detail Variant" :experimentData="$experiment" :variantList="$dataVariant->where('eksperimen_id', $experiment['eksperimen_id'])">
-                                    </x-modal-detail>
                                 @endforeach
                             @endif
+                            <x-modal-detail>
+                            </x-modal-detail>
                         </tbody>
                     </table>
                     <nav aria-label="Page navigation example" class="d-flex justify-content-end">
@@ -73,7 +75,7 @@ date_default_timezone_set('Asia/Jakarta');
                                     <a class="page-link" href="{{ $dataExperiment->url($i) }}">{{ $i }}</a>
                                 </li>
                             @endfor
-                            <li class="page-item {{ $dataExperiment->hasMorePages() ? '' : 'disabled' }}">
+                            <li class=" page-item {{ $dataExperiment->hasMorePages() ? '' : 'disabled' }}">
                                 <a class="page-link" href="{{ $dataExperiment->nextPageUrl() }}">Next</a>
                             </li>
                         </ul>
@@ -81,32 +83,8 @@ date_default_timezone_set('Asia/Jakarta');
                 </div>
             </div>
         </section>
+        {{-- <script src="assets/js/testing.js"> --}}
+        </script>
+        <script src="assets/js/generatecode.js"></script>
     </main>
-    <script>
-        // function soft delete eksperimen database
-        function confirmDelete(experimentId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // If confirmed, submit the form
-                    document.getElementById('delete-form-' + experimentId).submit();
-                    Swal.fire(
-                        'Deleted!',
-                        'Your experiment has been deleted.',
-                        'success'
-                    );
-                }
-            });
-        }
-
-        
-    </script>
 @endsection

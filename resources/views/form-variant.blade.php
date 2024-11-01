@@ -270,7 +270,7 @@
                     const variantValue = $(`#variant${index}`).val();
                     const conversionTypeValue = toggleInput(index);
                     const buttonClickName = conversionTypeValue === 'button' ? $(`#conversion${index}`)
-                    .val() : null;
+                        .val() : null;
                     const submitFormName = conversionTypeValue === 'form' ? $(`#conversion${index}`).val() :
                         null;
 
@@ -310,11 +310,19 @@
                             text: response.message,
                         }).then(() => {
                             $('#variantForm')[0].reset();
+                            location.reload()
                         });
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error('Error storing variants:', textStatus, errorThrown);
-                        alert('An error occurred. Please try again.');
+                    error: function(jqXHR, textStatus, errorThrown, ) {
+                        const responseErrors = jqXHR.responseJSON.message;
+                        const errorMessage = jqXHR.responseJSON.message ||
+                        "An error occurred."; // Fallback message
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: errorMessage,
+                        });
                     }
                 });
             }
