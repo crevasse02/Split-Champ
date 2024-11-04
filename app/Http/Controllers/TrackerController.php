@@ -84,17 +84,6 @@ class TrackerController extends Controller
             return response()->json(['status' => 'error', 'message' => 'No Experiment available'], 404);
         }
 
-        $viewsDataCountExperiment = ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
-            ->where('domain_name', $slug)
-            ->count();
-
-        if ($viewsDataCountExperiment === 0) {
-            return response()->json(['status' => 'error', 'message' => 'There are no matching URL Exp.'], 404);
-        }
-
-        ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
-            ->increment('view');
-
         // Get variant using eksperimen_id and matching slug
         $viewsDataCountVariant = TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)
             ->where('url_variant', $slug)
@@ -110,6 +99,44 @@ class TrackerController extends Controller
             ->where('url_variant', $slug)
             ->increment('view');
 
+
+        // Respond with success
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    public function viewBaseUrl(Request $request)
+    {
+        // Validate request data
+        $validator = Validator::make($request->all(), [
+            'slug' => 'required|string|max:255',
+            'token' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'messages' => $validator->errors()], 422);
+        }
+
+        // Extract and clean slug
+        $slug = $request->input('slug');  
+        $token = $request->input('token');
+
+        // Find eksperimen_id using the token
+        $eksperimen = ExperimentModel::where('eksperimen_id', $token)->first();
+
+        if (!$eksperimen) {
+            return response()->json(['status' => 'error', 'message' => 'No Experiment available'], 404);
+        }
+
+        $viewsDataCountExperiment = ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
+            ->where('domain_name', $slug)
+            ->count();
+
+        if ($viewsDataCountExperiment === 0) {
+            return response()->json(['status' => 'error', 'message' => 'There are no matching URL Exp.'], 404);
+        }
+
+        ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
+            ->increment('view');
 
         // Respond with success
         return response()->json(['status' => 'success'], 200);

@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Route;
 // API
 Route::post('/tracker-api', [TrackerController::class, 'tracker']);
 Route::post('/view-api', [TrackerController::class, 'view']);
+Route::post('/base-view-api', [TrackerController::class, 'viewBaseUrl']);
+
 
 
 Route::group(['middleware' => 'auth'], function () {
