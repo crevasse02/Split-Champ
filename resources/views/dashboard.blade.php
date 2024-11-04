@@ -109,13 +109,12 @@
                                                 fetch(`/api/get-variant/${eksperimenId}`)
                                                     .then(response => response.json())
                                                     .then(data => {
-                                                        // Check if data is empty
-                                                        if (!data || data.length === 0) {
+                                                        // Check if `variants` data is empty
+                                                        if (!data || !data.variants || data.variants.length === 0) {
                                                             // Clear the area chart and display "Data Not Found" message
                                                             if (areaChart) {
                                                                 areaChart.destroy(); // Destroy any existing chart instance
                                                             }
-                                                            console.log(data);
                                                             $("#areaChart").html("<p>Data Not Found</p>"); // Display message
                                                             return; // Exit the function
                                                         } else {
@@ -123,12 +122,24 @@
                                                         }
 
                                                         // Transform data to fit the chart format
-                                                        const seriesData = data.map(variant => ({
-                                                            title: 'Conversion Type',
-                                                            name: variant.variant_name, // Variant name for the legend
-                                                            data: [variant.button_click || 0, variant.form_submit ||
-                                                                0, variant.view || 0] // Button clicks and form submits
-                                                        }));
+                                                        const seriesData = [{
+                                                                name: 'Button Clicks',
+                                                                data: data.variants.map(variant => variant.button_click || 0)
+                                                            },
+                                                            {
+                                                                name: 'Form Submits',
+                                                                data: data.variants.map(variant => variant.form_submit || 0)
+                                                            },
+                                                            {
+                                                                name: 'Views (Variants)',
+                                                                data: data.variants.map(variant => variant.view || 0)
+                                                            },
+                                                            {
+                                                                name: 'Experiment View Count',
+                                                                data: [data.experiment_view_count ||
+                                                                    0] // Single data point for experiment view count
+                                                            }
+                                                        ];
 
                                                         // Destroy existing chart if it exists
                                                         if (areaChart) {
@@ -153,7 +164,8 @@
                                                             },
                                                             series: seriesData,
                                                             xaxis: {
-                                                                categories: ['Button Click', 'Form Submit', 'Page View'], // Labels for x-axis
+                                                                categories: ['Button Click', 'Form Submit',
+                                                                'Page View'], // Labels for x-axis
                                                                 title: {
                                                                     text: 'Conversion Type'
                                                                 }

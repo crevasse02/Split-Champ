@@ -35,7 +35,15 @@ class HomeController extends Controller
         $variantData = VariantModel::where('eksperimen_id', $eksperimenId)
             ->get(['variant_name', 'button_click', 'form_submit', 'view']);
 
-        // Instead of returning an error response, return an empty array
-        return response()->json($variantData);
+        // Retrieve the view count from the ExperimentModel
+        $experiment = ExperimentModel::where('eksperimen_id', $eksperimenId)->first(['view']);
+
+        // Structure the response to include both variant data and experiment view count
+        $response = [
+            'experiment_view_count' => $experiment ? $experiment->view : 0,  // Default to 0 if experiment not found
+            'variants' => $variantData,
+        ];
+
+        return response()->json($response);
     }
 }
