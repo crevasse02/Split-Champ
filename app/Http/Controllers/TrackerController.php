@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExperimentModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\TrackerModel;
@@ -84,11 +85,14 @@ class TrackerController extends Controller
         }
 
         // Get variant using eksperimen_id and matching slug
-        $viewsDataCount = TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)
+        $viewsDataCountVariant = TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)
             ->where('url_variant', $slug)
             ->count();
 
-        if ($viewsDataCount === 0) {
+        $viewsDataCountExperiment = ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
+            ->count();
+
+        if ($viewsDataCountVariant === 0 || $viewsDataCountExperiment === 0) {
             return response()->json(['status' => 'error', 'message' => 'There are no matching URL.'], 404);
         }
 
@@ -97,6 +101,8 @@ class TrackerController extends Controller
             ->where('url_variant', $slug)
             ->increment('view');
 
+        ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
+            ->increment('view');
         // Respond with success
         return response()->json(['status' => 'success'], 200);
     }

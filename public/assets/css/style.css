@@ -1280,3 +1280,10 @@ input:disabled {
 ::-webkit-scrollbar-thumb:hover {
     background-color: #555;    /* Thumb color on hover */
 }
+
+.selected-row {
+    --bs-table-bg: #cce5ff  !important; /* Light blue */
+}
+.experiment-row{
+    cursor: pointer;
+}

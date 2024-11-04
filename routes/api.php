@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\experimentController;
 use App\Http\Controllers\generateController;
-use App\Http\Controllers\trackerController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\variantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/get-variant/{eksperimenId}', [HomeController::class, 'getVariantData']);
 
 Route::post('/store-experiment', [experimentController::class, 'store'])->name('store-experiment');
 
