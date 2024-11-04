@@ -121,6 +121,10 @@
                                                             $("#areaChart").html(''); // Clear the chart container
                                                         }
 
+                                                        // Set experiment view count for each variant entry for consistency
+                                                        const experimentViewCount = data.experiment_view_count || 0;
+                                                        const variantDataCount = data.variants.length;
+
                                                         // Transform data to fit the chart format
                                                         const seriesData = [{
                                                                 name: 'Button Clicks',
@@ -136,7 +140,8 @@
                                                             },
                                                             {
                                                                 name: 'Experiment View Count',
-                                                                data: [data.experiment_view_count || 0] 
+                                                                data: Array(variantDataCount).fill(
+                                                                    experimentViewCount) // Fill with the same count
                                                             }
                                                         ];
 
@@ -163,8 +168,8 @@
                                                             },
                                                             series: seriesData,
                                                             xaxis: {
-                                                                categories: ['Button Click', 'Form Submit',
-                                                                'Page View', 'Experiment View'], // Labels for x-axis
+                                                                categories: data.variants.map(variant => variant
+                                                                .variant_name), // Use variant names
                                                                 title: {
                                                                     text: 'Conversion Type'
                                                                 }
@@ -192,6 +197,7 @@
                                                     })
                                                     .catch(error => console.error("Error fetching data:", error));
                                             }
+
 
                                             // Listen for clicks on each experiment row
                                             $(".experiment-row").on("click", function() {
