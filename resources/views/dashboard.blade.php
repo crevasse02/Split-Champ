@@ -121,27 +121,26 @@
                                                             $("#areaChart").html(''); // Clear the chart container
                                                         }
 
-                                                        // Set experiment view count for each variant entry for consistency
-                                                        const experimentViewCount = data.experiment_view_count || 0;
-                                                        const variantDataCount = data.variants.length;
-
-                                                        // Transform data to fit the chart format
+                                                        // Set up series data for each conversion type
                                                         const seriesData = [{
                                                                 name: 'Button Clicks',
-                                                                data: data.variants.map(variant => variant.button_click || 0)
+                                                                data: [...data.variants.map(variant => variant.button_click || 0),
+                                                                    null] // Add null for last bar
                                                             },
                                                             {
                                                                 name: 'Form Submits',
-                                                                data: data.variants.map(variant => variant.form_submit || 0)
+                                                                data: [...data.variants.map(variant => variant.form_submit || 0),
+                                                                    null] // Add null for last bar
                                                             },
                                                             {
                                                                 name: 'Views (Variants)',
-                                                                data: data.variants.map(variant => variant.view || 0)
+                                                                data: [...data.variants.map(variant => variant.view || 0),
+                                                                    null] // Add null for last bar
                                                             },
                                                             {
                                                                 name: 'Experiment View Count',
-                                                                data: Array(variantDataCount).fill(
-                                                                    experimentViewCount) // Fill with the same count
+                                                                data: Array(data.variants.length).fill(null).concat(data
+                                                                    .experiment_view_count || 0) // Fill nulls, add count at end
                                                             }
                                                         ];
 
@@ -168,8 +167,10 @@
                                                             },
                                                             series: seriesData,
                                                             xaxis: {
-                                                                categories: data.variants.map(variant => variant
-                                                                .variant_name), // Use variant names
+                                                                categories: [
+                                                                    ...data.variants.map(variant => variant.variant_name),
+                                                                    'Experiment View Count' // Add as separate x-axis category
+                                                                ],
                                                                 title: {
                                                                     text: 'Conversion Type'
                                                                 }
@@ -181,7 +182,8 @@
                                                             },
                                                             dataLabels: {
                                                                 enabled: true,
-                                                                formatter: (val) => val.toString() // Ensure data labels display as text
+                                                                formatter: (val) => val ? val.toString() :
+                                                                    '' // Ensure data labels display as text, hide nulls
                                                             },
                                                             tooltip: {
                                                                 y: {
@@ -197,6 +199,7 @@
                                                     })
                                                     .catch(error => console.error("Error fetching data:", error));
                                             }
+
 
 
                                             // Listen for clicks on each experiment row
