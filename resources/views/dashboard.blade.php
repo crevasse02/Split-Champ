@@ -136,8 +136,7 @@
                                                             },
                                                             {
                                                                 name: 'Experiment View Count',
-                                                                data: [data.experiment_view_count ||
-                                                                    0] // Single data point for experiment view count
+                                                                data: [data.experiment_view_count || 0] 
                                                             }
                                                         ];
 
@@ -165,7 +164,7 @@
                                                             series: seriesData,
                                                             xaxis: {
                                                                 categories: ['Button Click', 'Form Submit',
-                                                                'Page View'], // Labels for x-axis
+                                                                'Page View', 'Experiment View'], // Labels for x-axis
                                                                 title: {
                                                                     text: 'Conversion Type'
                                                                 }
