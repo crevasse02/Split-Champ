@@ -86,6 +86,7 @@
 
                                     <!-- Area Chart -->
                                     <div id="areaChart" class="text-center"></div>
+                                    <div id="experimentViewChart" ></div>
 
                                     <script>
                                         $(document).ready(function() {
@@ -111,68 +112,65 @@
                                                     .then(data => {
                                                         // Check if `variants` data is empty
                                                         if (!data || !data.variants || data.variants.length === 0) {
-                                                            // Clear the area chart and display "Data Not Found" message
+                                                            // Clear the charts and display "Data Not Found" message
                                                             if (areaChart) {
-                                                                areaChart.destroy(); // Destroy any existing chart instance
+                                                                areaChart.destroy();
                                                             }
-                                                            $("#areaChart").html("<p>Data Not Found</p>"); // Display message
-                                                            return; // Exit the function
+                                                            if (experimentViewChart) {
+                                                                experimentViewChart.destroy();
+                                                            }
+                                                            $("#areaChart").html("<p>Data Not Found</p>");
+                                                            $("#experimentViewChart").html(""); // Clear second chart container
+                                                            return;
                                                         } else {
-                                                            $("#areaChart").html(''); // Clear the chart container
+                                                            $("#areaChart").html('');
+                                                            $("#experimentViewChart").html('');
                                                         }
 
-                                                        // Set up series data for each conversion type
-                                                        const seriesData = [{
+                                                        // Prepare data for the variant chart
+                                                        const variantSeriesData = [{
                                                                 name: 'Button Clicks',
-                                                                data: [...data.variants.map(variant => variant.button_click || 0),
-                                                                    null] // Add null for last bar
+                                                                data: data.variants.map(variant => variant.button_click || 0)
                                                             },
                                                             {
                                                                 name: 'Form Submits',
-                                                                data: [...data.variants.map(variant => variant.form_submit || 0),
-                                                                    null] // Add null for last bar
+                                                                data: data.variants.map(variant => variant.form_submit || 0)
                                                             },
                                                             {
-                                                                name: 'Views (Variants)',
-                                                                data: [...data.variants.map(variant => variant.view || 0),
-                                                                    null] // Add null for last bar
-                                                            },
-                                                            {
-                                                                name: 'Experiment View Count',
-                                                                data: Array(data.variants.length).fill(null).concat(data
-                                                                    .experiment_view_count || 0) // Fill nulls, add count at end
+                                                                name: 'Variant Views (Variants)',
+                                                                data: data.variants.map(variant => variant.view || 0)
                                                             }
                                                         ];
 
-                                                        // Destroy existing chart if it exists
+                                                        // Destroy existing charts if they exist
                                                         if (areaChart) {
                                                             areaChart.destroy();
                                                         }
+                                                        if (experimentViewChart) {
+                                                            experimentViewChart.destroy();
+                                                        }
 
-                                                        // Initialize and render the bar chart
+                                                        // Initialize and render the variant chart
                                                         areaChart = new ApexCharts(document.querySelector("#areaChart"), {
                                                             chart: {
                                                                 type: 'bar',
                                                                 toolbar: {
-                                                                    show: false // Hide toolbar if not needed
+                                                                    show: false
                                                                 }
                                                             },
                                                             plotOptions: {
                                                                 bar: {
-                                                                    horizontal: false, // Set to vertical bars
+                                                                    horizontal: false,
                                                                     dataLabels: {
-                                                                        position: 'top' // Display data labels on top of bars
+                                                                        position: 'top'
                                                                     }
                                                                 }
                                                             },
-                                                            series: seriesData,
+                                                            series: variantSeriesData,
                                                             xaxis: {
-                                                                categories: [
-                                                                    ...data.variants.map(variant => variant.variant_name),
-                                                                    'Experiment View Count' // Add as separate x-axis category
-                                                                ],
+                                                                categories: data.variants.map(variant => variant.variant_name),
                                                                 title: {
-                                                                    text: 'Conversion Type'
+                                                                    text: 'Variant Lists'
                                                                 }
                                                             },
                                                             yaxis: {
@@ -182,12 +180,11 @@
                                                             },
                                                             dataLabels: {
                                                                 enabled: true,
-                                                                formatter: (val) => val ? val.toString() :
-                                                                    '' // Ensure data labels display as text, hide nulls
+                                                                formatter: (val) => val.toString()
                                                             },
                                                             tooltip: {
                                                                 y: {
-                                                                    formatter: (val) => `${val} interactions` // Customize tooltip
+                                                                    formatter: (val) => `${val} interactions`
                                                                 }
                                                             },
                                                             legend: {
@@ -196,6 +193,53 @@
                                                         });
 
                                                         areaChart.render();
+
+                                                        // Initialize and render the experiment view count chart
+                                                        experimentViewChart = new ApexCharts(document.querySelector("#experimentViewChart"), {
+                                                            chart: {
+                                                                type: 'bar',
+                                                                toolbar: {
+                                                                    show: false
+                                                                }
+                                                            },
+                                                            plotOptions: {
+                                                                bar: {
+                                                                    horizontal: true,
+                                                                    dataLabels: {
+                                                                        position: 'top'
+                                                                    }
+                                                                }
+                                                            },
+                                                            series: [{
+                                                                name: 'Experiment View Count',
+                                                                data: [data.experiment_view_count || 0]
+                                                            }],
+                                                            xaxis: {
+                                                                categories: ['Experiment View Count'],
+                                                                title: {
+                                                                    text: 'Experiment Metric'
+                                                                }
+                                                            },
+                                                            yaxis: {
+                                                                title: {
+                                                                    text: 'Count'
+                                                                }
+                                                            },
+                                                            dataLabels: {
+                                                                enabled: true,
+                                                                formatter: (val) => val.toString()
+                                                            },
+                                                            tooltip: {
+                                                                y: {
+                                                                    formatter: (val) => `${val} views`
+                                                                }
+                                                            },
+                                                            legend: {
+                                                                position: 'right'
+                                                            }
+                                                        });
+
+                                                        experimentViewChart.render();
                                                     })
                                                     .catch(error => console.error("Error fetching data:", error));
                                             }
