@@ -15,32 +15,30 @@ class TrackerController extends Controller
         $validator = Validator::make($request->all(), [
             'selector' => 'required|string|max:255',
             'token' => 'required|string|max:255',
-            'variant' => 'string|max:255', // Validate each item in the 'variant' array
-
+            'variant' => 'string|max:255',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['status' => 'error', 'messages' => $validator->errors()], 422);
         }
 
-        // Extract and clean selector
+        // Clean input
         $selector = ltrim($request->input('selector'), '.#');
         $token = $request->input('token');
         $variant = $request->input('variant');
 
-        // Find eksperimen_id using the token
+        // Find the experiment by token
         $eksperimen = TrackerModel::where('eksperimen_id', $token)->first();
-
         if (!$eksperimen) {
             return response()->json(['status' => 'error', 'message' => 'No variant found for this token.'], 404);
         }
 
-        // Get variant using eksperimen_id and matching selector
+        // Get variant data
         $variantData = TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)
-            ->where('variant_name', $variant) // Add condition to check variant_name
+            ->where('variant_name', $variant)
             ->where(function ($query) use ($selector) {
                 $query->where('button_click_name', $selector)
-                    ->orWhere('submit_form_name', $selector);
+                      ->orWhere('submit_form_name', $selector);
             })
             ->first();
 
@@ -48,15 +46,12 @@ class TrackerController extends Controller
             return response()->json(['status' => 'error', 'message' => 'No variant found for the selector.'], 404);
         }
 
-        // Increment appropriate counter
+        // Increment the appropriate counter
         if ($variantData->button_click_name === $selector) {
-            $variantData->button_click = ($variantData->button_click ?? 0) + 1;
+            $variantData->increment('button_click');
         } elseif ($variantData->submit_form_name === $selector) {
-            $variantData->form_submit = ($variantData->form_submit ?? 0) + 1;
+            $variantData->increment('form_submit');
         }
-
-        // Save and respond
-        $variantData->save();
 
         return response()->json(['status' => 'success'], 200);
     }
@@ -73,37 +68,31 @@ class TrackerController extends Controller
             return response()->json(['status' => 'error', 'messages' => $validator->errors()], 422);
         }
 
-        // Extract and clean slug
-        $slug = basename($request->input('slug'));  // Get only the last part of the slug
+        // Clean slug
+        $slug = basename($request->input('slug'));
         $token = $request->input('token');
 
-        // Find eksperimen_id using the token
+        // Find the experiment by token
         $eksperimen = TrackerModel::where('eksperimen_id', $token)->first();
-
         if (!$eksperimen) {
             return response()->json(['status' => 'error', 'message' => 'No Experiment available'], 404);
         }
 
-        // Get variant using eksperimen_id and matching slug
-        $viewsDataCountVariant = TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)
-            ->where('url_variant', $slug)
-            ->count();
-
-        $viewsDataCountExperiment = ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
-            ->count();
-
-        if ($viewsDataCountVariant === 0 || $viewsDataCountExperiment === 0) {
+        // Check for matching URL in ExperimentModel
+        if (ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)->where('domain_name', $slug)->doesntExist()) {
             return response()->json(['status' => 'error', 'message' => 'There are no matching URL.'], 404);
         }
 
-        // Increment the view count for all matching records
-        TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)
-            ->where('url_variant', $slug)
-            ->increment('view');
+        // Increment view count in ExperimentModel
+        ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)->increment('view');
 
-        ExperimentModel::where('eksperimen_id', $eksperimen->eksperimen_id)
-            ->increment('view');
-        // Respond with success
+        // Increment view count in TrackerModel
+        if (TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)->where('url_variant', $slug)->doesntExist()) {
+            return response()->json(['status' => 'error', 'message' => 'There are no matching URL.'], 404);
+        }
+
+        TrackerModel::where('eksperimen_id', $eksperimen->eksperimen_id)->where('url_variant', $slug)->increment('view');
+
         return response()->json(['status' => 'success'], 200);
     }
 }
