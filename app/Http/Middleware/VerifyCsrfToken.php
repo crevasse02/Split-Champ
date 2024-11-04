@@ -13,6 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'tracker-api', // Adjust this for your route
-        'view-api'
+        'view-api',
+        'base-view-api'
     ];
 }
