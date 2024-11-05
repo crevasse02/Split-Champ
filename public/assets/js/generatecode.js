@@ -21,61 +21,62 @@ $(document).ready(function () {
             variantContent += variantList
                 .map(
                     (variant, index) => `
-          <div class="card mb-2">
-              <div class="card-body">
-                  <h5 class="card-title">Variant ${index + 1}</h5>
-                  <form class="variant-form">
-                      <div>
-                          <label for="variant-name" class="col-form-label">Variant Name</label>
-                          <input type="text" class="form-control" id="variant-name${
-                              variant.variant_id
-                          }" readonly value="${variant.variant_name}">
-                      </div>
-                      <div>
-                          <label for="url-name" class="col-form-label">URL</label>
-                          <input type="text" class="form-control" id="url-name${
-                              variant.variant_id
-                          }" readonly value="${experiment.domain_name}/${
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">Variant ${index + 1}</h5>
+                    <form class="variant-form" data-variant-id="${
+                        variant.variant_id
+                    }">
+                        <div>
+                            <label for="variant-name" class="col-form-label">Variant Name</label>
+                            <input type="text" class="form-control" id="variant-name${
+                                variant.variant_id
+                            }" readonly value="${variant.variant_name}">
+                        </div>
+                        <div>
+                            <label for="url-name" class="col-form-label">URL</label>
+                            <input type="text" class="form-control" id="url-name${
+                                variant.variant_id
+                            }" readonly value="${experiment.domain_name}/${
                         variant.url_variant
                     }">
-                      </div>
-                      <div class="d-flex justify-content-between">
-                          <div>
-                              <label for="conversion-name" class="col-form-label">Conversion Type</label>
-                              <select class="form-select" id="conversion-name${
-                                  variant.variant_id
-                              }" disabled>
-                                  <option value="button" ${
-                                      variant.conversion_type === "button"
-                                          ? "selected"
-                                          : ""
-                                  }>Button</option>
-                                  <option value="form" ${
-                                      variant.conversion_type === "form"
-                                          ? "selected"
-                                          : ""
-                                  }>Form</option>
-                              </select>
-                          </div>
-                          <div>
-                              <label for="idorclass-name" class="col-form-label">ID/Class Name</label>
-                              <input type="text" id="idorclass-name${
-                                  variant.variant_id
-                              }" class="form-control" readonly value="${
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <label for="conversion-name" class="col-form-label">Conversion Type</label>
+                                <select class="form-select" id="conversion-name${
+                                    variant.variant_id
+                                }" disabled>
+                                    <option value="button" ${
+                                        variant.conversion_type === "button"
+                                            ? "selected"
+                                            : ""
+                                    }>Button</option>
+                                    <option value="form" ${
+                                        variant.conversion_type === "form"
+                                            ? "selected"
+                                            : ""
+                                    }>Form</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="idorclass-name" class="col-form-label">ID/Class Name</label>
+                                <input type="text" id="idorclass-name${
+                                    variant.variant_id
+                                }" class="form-control" readonly value="${
                         variant.button_click_name
                             ? "." + variant.button_click_name
                             : "#" + variant.submit_form_name
                     }">
-                          </div>
-                          <input type="hidden" class="form-control" id="eksperimenId${
-                              variant.variant_id
-                          }" value="${variant.eksperimen_id}">
-                          <input type="hidden" id="_token" value="{{ csrf_token() }}">
-                      </div>
-                  </form>
-              </div>
-          </div>
-      `
+                            </div>
+                            <input type="hidden" class="form-control" id="eksperimenId${
+                                variant.variant_id
+                            }" value="${variant.eksperimen_id}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            `
                 )
                 .join("");
         }
@@ -87,6 +88,48 @@ $(document).ready(function () {
         $("#experimentDetails").html(variantContent);
         $("#modalDetail").modal("show");
     });
+
+    // Toggle edit mode for form fields
+    // $(document).on("click", ".edit-button", function () {
+    //     const variantId = $(this).data("variant-id");
+    //     const form = $(`form[data-variant-id="${variantId}"]`);
+    //     const editButton = $(this);
+    //     const isEditing = editButton.text() === "Edit";
+    //     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+    //     if (isEditing) {
+    //         // Enable fields for editing
+    //         form.find("input, select").prop("readonly", false).prop("disabled", false);
+    //         editButton.text("Save");
+    //     } else {
+    //         // Gather data for AJAX submission
+    //         const updatedData = {
+    //             variant_name: form.find(`#variant-name${variantId}`).val(),
+    //             url_variant: form.find(`#url-name${variantId}`).val(),
+    //             conversion_type: form.find(`#conversion-name${variantId}`).val(),
+    //             button_click_name: form.find(`#idorclass-name${variantId}`).val().replace(/^\./, ""), // Remove leading dot
+    //             submit_form_name: form.find(`#idorclass-name${variantId}`).val().replace(/^#/, ""), // Remove leading hash
+    //             _token: csrfToken // Add the CSRF token to the data
+    //         };
+
+    //         // AJAX request to save the updated data as an array
+    //         $.ajax({
+    //             url: '/variants/update', // Adjust to your API endpoint for bulk update
+    //             type: "POST",
+    //             data: { variantId, updatedData }, // Sending variant ID and updated data
+    //             success: function (response) {
+    //                 alert(response.success);
+
+    //                 // Reload the page to reflect changes
+    //                 location.reload();
+    //             },
+    //             error: function (error) {
+    //                 console.error(error);
+    //                 alert("Failed to update variant. Please try again.");
+    //             },
+    //         });
+    //     }
+    // });
 
     // Handle button clicks dynamically
     $(document).on("click", '[data-toggle="modal"]', function () {

@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Generate code Controllers Routes
     Route::get('/generate-code', [generateController::class, 'index'])->name('generate-code');
+    // Route::post('/variants/update', [generateController::class, 'update']);
 
 });
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');

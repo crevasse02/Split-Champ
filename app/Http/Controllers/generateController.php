@@ -20,10 +20,26 @@ class generateController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
-    {
-       
-    }
+    // public function update(Request $request)
+    // {
+    //     // Validate incoming request data
+    //     $validated = $request->validate([
+    //         'variantId' => 'required|integer', // Validate variant ID
+    //         'updatedData.variant_name' => 'required|string|max:255',
+    //         'updatedData.url_variant' => 'required|string|max:255',
+    //         'updatedData.conversion_type' => 'required|string',
+    //         'updatedData.button_click_name' => 'nullable|string',
+    //         'updatedData.submit_form_name' => 'nullable|string',
+    //     ]);
+
+    //     // Find the variant by ID and update it
+    //     $variant = VariantModel::findOrFail($validated['variantId']);
+    //     $variant->update($validated['updatedData']);
+
+    //     // Return success response
+    //     return response()->json(['success' => 'Variant updated successfully!']);
+    // }
+
 
     public function destroy($id)
     {

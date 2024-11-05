@@ -15,6 +15,7 @@
                         <!-- Content will be injected here by JavaScript -->
                     </div>
 
+
                     <!-- Right Column for Generate Code and Copy Code buttons -->
                     <div class="col-md-6 d-flex justify-content-between flex-column ">
                         <button type="button" id="generateButton" class="btn btn-md btn-primary w-100">
