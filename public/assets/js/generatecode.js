@@ -183,7 +183,7 @@ $(document).ready(function () {
         dataMappingContent += `];`;
 
         const combinedScript = `${dataMappingContent} ${tokenContent} ${redirectScript}`;
-        $("#scriptTextArea").val(`<script> ${combinedScript}</ script>`);
+        $("#scriptTextArea").val(`<script> ${combinedScript}</script>`);
         $("#copyButton").show(); // Show copy button
     });
 
