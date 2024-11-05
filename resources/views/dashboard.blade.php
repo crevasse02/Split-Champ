@@ -47,7 +47,7 @@
                                                         data-eksperimen-id="{{ $experiment['eksperimen_id'] }}">
                                                         <th scope="row">{{ $index + 1 }}</th> <!-- Row number -->
                                                         <td>{{ $experiment['eksperimen_name'] }}</td>
-                                                        <td>{{ $experiment['domain_name'] }}</td>
+                                                        <td id="domain_name">{{ $experiment['domain_name'] }}</td>
                                                         <td>{{ $experiment['created_by'] }}</td>
                                                         <td>{{ $experiment['created_at'] }}</td>
                                                     </tr>

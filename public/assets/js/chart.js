@@ -20,6 +20,9 @@ $(document).ready(function () {
             .then((response) => response.json())
             .then((data) => {
                 // Check if `variants` data is empty
+                const domainName = $('#domain_name').html();
+
+                // console.log(domainName)
                 if (!data || !data.variants || data.variants.length === 0) {
                     // Clear the area chart and display "Data Not Found" message
                     if (areaChart) {
@@ -61,7 +64,7 @@ $(document).ready(function () {
                         ], // Add null for last bar
                     },
                     {
-                        name: "Experiment View Count",
+                        name: "Domain View Count",
                         data: Array(data.variants.length)
                             .fill(null)
                             .concat(data.experiment_view_count || 0), // Fill nulls, add count at end
@@ -85,9 +88,9 @@ $(document).ready(function () {
                         },
                         plotOptions: {
                             bar: {
-                                horizontal: false, // Set to vertical bars
+                                borderRadius: 10,
                                 dataLabels: {
-                                    position: "top", // Display data labels on top of bars
+                                    position: "top", // top, center, bottom
                                 },
                             },
                         },
@@ -97,7 +100,7 @@ $(document).ready(function () {
                                 ...data.variants.map(
                                     (variant) => variant.variant_name
                                 ),
-                                "Domain View Count", // Add as separate x-axis category
+                                domainName, // Add as separate x-axis category
                             ],
                         },
                         yaxis: {
@@ -107,7 +110,10 @@ $(document).ready(function () {
                         },
                         dataLabels: {
                             enabled: true,
-                            formatter: (val) => (val ? val.toString() : ""), // Ensure data labels display as text, hide nulls
+                            formatter: (val) => (val ? val.toString() : ""),
+                            style: {
+                                fontSize: "16px",
+                            },
                         },
                         tooltip: {
                             y: {
