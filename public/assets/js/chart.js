@@ -20,9 +20,6 @@ $(document).ready(function () {
             .then((response) => response.json())
             .then((data) => {
                 // Check if `variants` data is empty
-                const domainName = $('#domain_name').html();
-
-                // console.log(domainName)
                 if (!data || !data.variants || data.variants.length === 0) {
                     // Clear the area chart and display "Data Not Found" message
                     if (areaChart) {
@@ -100,7 +97,7 @@ $(document).ready(function () {
                                 ...data.variants.map(
                                     (variant) => variant.variant_name
                                 ),
-                                domainName, // Add as separate x-axis category
+                                "Domain View Count", // Add as separate x-axis category
                             ],
                         },
                         yaxis: {
