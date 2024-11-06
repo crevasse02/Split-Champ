@@ -1281,6 +1281,18 @@ input:disabled {
     background-color: #555;    /* Thumb color on hover */
 }
 
+.sidebar-nav .nav-link.non-active {
+    background-color: white; /* Example color for selected background */
+}
+
+.sidebar-nav .nav-link.active {
+    background-color: #007bff; /* Example color for selected background */
+    color: #fff; /* Optional: change text color */
+}
+.sidebar-nav .nav-link.active i {
+    color: #fff; /* Optional: change icon color */
+}
+
 .selected-row {
     --bs-table-bg: #cce5ff  !important; /* Light blue */
 }

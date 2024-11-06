@@ -116,54 +116,40 @@
 
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
-
         <ul class="sidebar-nav" id="sidebar-nav">
-
+    
             <li class="nav-item">
-                <a class="nav-link " href="/">
+                <a class="nav-link {{ Request::is('/') ? 'active' : 'non-active' }}" href="/">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
             </li><!-- End Dashboard Nav -->
-
+    
             <li class="nav-heading">Pages</li>
+            
             <li class="nav-item">
-                <a class="nav-link collapsed" href="/create-experiment">
-                    <i class="bi bi-person"></i>
+                <a class="nav-link {{ Request::is('create-experiment') ? 'active' : 'non-active' }}" href="/create-experiment">
+                    <i class="bi bi-card-checklist"></i>
                     <span>Create Experiment</span>
                 </a>
             </li>
+            
             <li class="nav-item">
-                <a class="nav-link collapsed" href="/form-variant">
-                    <i class="bi bi-person"></i>
+                <a class="nav-link {{ Request::is('form-variant') ? 'active' : 'non-active' }}" href="/form-variant">
+                    <i class="bi bi-list-ul"></i>
                     <span>Form Variant</span>
                 </a>
             </li>
+            
             <li class="nav-item">
-                <a class="nav-link collapsed" href="/generate-code">
-                    <i class="bi bi-person"></i>
+                <a class="nav-link {{ Request::is('generate-code') ? 'active' : 'non-active' }}" href="/generate-code">
+                    <i class="bi bi-code-square"></i>
                     <span>Generate Code</span>
                 </a>
             </li>
-            <!-- End Profile Page Nav -->
-
-            {{-- <li class="nav-item">
-                <a class="nav-link collapsed" href="/login">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Login</span>
-                </a>
-            </li><!-- End Login Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/register">
-                    <i class="bi bi-card-list"></i>
-                    <span>Register</span>
-                </a>
-            </li><!-- End Register Page Nav --> --}}
-
+            
         </ul>
-
-    </aside><!-- End Sidebar-->
+    </aside>
 
     @yield('content')
 
