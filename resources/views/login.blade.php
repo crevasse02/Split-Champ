@@ -64,10 +64,10 @@
                                             <button type="submit" class="btn btn-primary rounded-pill bgc-primary">Sign
                                                 in</button>
                                         </div>
-                                        <div class="col-12 text-center">
+                                        {{-- <div class="col-12 text-center">
                                             <p class="small mb-0">Don't have account? <a href="{{ route('register') }}">Create
                                                     an account</a></p>
-                                        </div>
+                                        </div> --}}
                                     </form>
 
                                 </div>

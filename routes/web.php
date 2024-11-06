@@ -7,6 +7,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TrackerController;
 use App\Http\Controllers\variantController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -39,17 +41,36 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/generate-code', [generateController::class, 'index'])->name('generate-code');
     // Route::post('/variants/update', [generateController::class, 'update']);
 
+    // Show Registration Form (GET)
+    Route::get('/register', function () {
+        if (Auth::check() && Auth::user()->email === 'raffi@gmail.com') {
+            // Redirect to the registration form method in RegisterController
+            return (new RegisterController)->showRegistrationForm();
+        }
+
+        // Redirect if the user is unauthorized
+        return redirect()->route('dashboard')->with('error', 'Unauthorized access.');
+    })->name('register');
+
+    // Handle Registration Form Submission (POST)
+    Route::post('/register', function (Request $request) {
+        if (Auth::check() && Auth::user()->email === 'raffi@gmail.com') {
+            // Call the registerForm method in RegisterController
+            return (new RegisterController)->registerForm($request);
+        }
+
+        // Redirect if the user is unauthorized
+        return redirect()->route('dashboard')->with('error', 'Unauthorized access.');
+    });
 });
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::post('/login-process', [LoginController::class, 'login_process'])->name('login-process');
-Route::post('/register', [RegisterController::class, 'registerForm']);
+
 
 Route::fallback(function () {
     return redirect('/'); // Redirect to homepage or any other route
     // Alternatively, show a 404 page
     // return response()->view('errors.404', [], 404);
 });
-
