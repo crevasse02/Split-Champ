@@ -72,7 +72,7 @@ const redirectScript = `
             console.log("Matching URL found:", matchedData.slug); // Debugging line
 
             // Unique key to track if view data has been sent
-            const viewDataKey = '${matchedData.slug}'+'_viewDataSent';
+           const viewDataKey = matchedData.slug + '_viewDataSent';
             if (!sessionStorage.getItem(viewDataKey)) {
                 const viewData = {
                     slug: matchedData.slug,
