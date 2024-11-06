@@ -1,5 +1,5 @@
 const redirectScript = `
-  (function () {
+(function () {
     // Function to send data to API
     function sendClickData(data) {
         fetch("https://split.esensigroup.com/tracker-api", {
@@ -26,6 +26,7 @@ const redirectScript = `
             .then((data) => console.log("Success:", data))
             .catch((error) => console.error("Error:", error));
     }
+
     function sendBaseViewData(data) {
         fetch("https://split.esensigroup.com/base-view-api", {
             method: "POST",
@@ -72,7 +73,7 @@ const redirectScript = `
             console.log("Matching URL found:", matchedData.slug); // Debugging line
 
             // Unique key to track if view data has been sent
-           const viewDataKey = matchedData.slug + '_viewDataSent';
+            const viewDataKey = matchedData.slug + '_viewDataSent';
             if (!sessionStorage.getItem(viewDataKey)) {
                 const viewData = {
                     slug: matchedData.slug,
@@ -89,63 +90,64 @@ const redirectScript = `
     }
 
     // Function to set up click event listeners
-		function setupClickListeners() {
-			dataMapping.forEach(({ selector, variant, slug }) => {
-					const elements = document.querySelectorAll(selector);
+    function setupClickListeners() {
+        dataMapping.forEach(({ selector, variant, slug }) => {
+            const elements = document.querySelectorAll(selector);
 
-					elements.forEach((element) => {
-							// Separate flags for form and non-form elements
-							let isFormSubmitting = false;
-							let isClickSubmitting = false;
+            elements.forEach((element) => {
+                // Separate flags for form and non-form elements
+                let isFormSubmitting = false;
+                let isClickSubmitting = false;
 
-							const sendData = () => {
-									const currentUrl = window.location.host + window.location.pathname;
+                const sendData = () => {
+                    const currentUrl = window.location.host + window.location.pathname;
 
-									// Validate if the current URL matches the slug
-									if (currentUrl.includes(slug)) {
-											const clickData = {
-													url: currentUrl,
-													selector: selector,
-													variant: variant,
-													token: token,
-											};
-											sendClickData(clickData); // Send data to API
-											console.log("Data sent to API:", clickData);
-									} else {
-											console.log("Current URL does not match slug:", slug);
-									}
-							};
+                    // Validate if the current URL matches the slug
+                    if (currentUrl.includes(slug)) {
+                        const clickData = {
+                            url: currentUrl,
+                            selector: selector,
+                            variant: variant,
+                            token: token,
+                        };
+                        sendClickData(clickData); // Send data to API
+                        console.log("Data sent to API:", clickData);
+                    } else {
+                        console.log("Current URL does not match slug:", slug);
+                    }
+                };
 
-							// Handling form submissions using wpcf7mailsent and wpcf7invalid events
-							if (element.tagName === "FORM") {
-									document.addEventListener('wpcf7mailsent', (event) => {
-											if (event.srcElement.matches(selector) && !isFormSubmitting) {
-													isFormSubmitting = true;
-													sendData(); // Send data for successful form submission
-													console.log("Form sent successfully, data sent.");
-											}
-									});
+                // Handling form submissions using wpcf7mailsent and wpcf7invalid events
+                if (element.tagName === "FORM") {
+                    document.addEventListener('wpcf7mailsent', (event) => {
+                        if (event.srcElement.matches(selector) && !isFormSubmitting) {
+                            isFormSubmitting = true;
+                            sendData(); // Send data for successful form submission
+                            console.log("Form sent successfully, data sent.");
+                        }
+                    });
 
-									document.addEventListener('wpcf7invalid', (event) => {
-											if (event.srcElement.matches(selector)) {
-													console.log("Form submission invalid, data not sent.");
-											}
-									});
-							} else {
-									// For non-form elements, handle the click event
-									element.addEventListener("click", () => {
-											if (!isClickSubmitting) {
-													isClickSubmitting = true;
-													sendData(); // Send data for click
-													console.log("Non-form element clicked, data sent.");
-											} else {
-													console.log("Element already clicked.");
-											}
-									});
-							}
-					});
-			});
-		}
+                    document.addEventListener('wpcf7invalid', (event) => {
+                        if (event.srcElement.matches(selector)) {
+                            console.log("Form submission invalid, data not sent.");
+                        }
+                    });
+                } else {
+                    // For non-form elements, handle the click event
+                    element.addEventListener("click", () => {
+                        if (!isClickSubmitting) {
+                            isClickSubmitting = true;
+                            sendData(); // Send data for click
+                            console.log("Non-form element clicked, data sent.");
+                        } else {
+                            console.log("Element already clicked.");
+                        }
+                    });
+                }
+            });
+        });
+    }
+
     // Run setup after the DOM is fully loaded
     document.addEventListener("DOMContentLoaded", function () {
         // Send view data for base URL load
@@ -158,25 +160,24 @@ const redirectScript = `
         setupClickListeners();
 
         // Redirect logic
-            if (sessionStorage.getItem("hasRedirected")) {
-                return;
-            }
+        if (sessionStorage.getItem("hasRedirected")) {
+            return;
+        }
 
-            const selectedData =
-                dataMapping[Math.floor(Math.random() * dataMapping.length)];
-            let tempSlugHits = localStorage.getItem(selectedData.slug + "_hits")
-                ? parseInt(localStorage.getItem(selectedData.slug + "_hits"))
-                : 0;
+        const selectedData =
+            dataMapping[Math.floor(Math.random() * dataMapping.length)];
+        let tempSlugHits = localStorage.getItem(selectedData.slug + "_hits")
+            ? parseInt(localStorage.getItem(selectedData.slug + "_hits"))
+            : 0;
 
-            tempSlugHits++;
-            localStorage.setItem(selectedData.slug + "_hits", tempSlugHits);
+        tempSlugHits++;
+        localStorage.setItem(selectedData.slug + "_hits", tempSlugHits);
 
-        
-            sessionStorage.setItem("hasRedirected", "true");
-			
-						setTimeout(() => {
-								window.location.href = selectedData.slug;
-						}, 1000); // 1000ms = 1 second
+        sessionStorage.setItem("hasRedirected", "true");
+
+        setTimeout(() => {
+            window.location.href = selectedData.slug;
+        }, 1000); // 1000ms = 1 second
     });
 })();
 `;
