@@ -175,5 +175,4 @@ const redirectScript = `
                 window.location.href = selectedData.slug;
             }, 1000); // 1000ms = 1 second
         });
-    })();
-`;
+    })();`;
