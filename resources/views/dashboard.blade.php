@@ -85,7 +85,7 @@
                                     <h5 class="card-title">Conversion Percentage</h5>
 
                                     <!-- Pie Chart -->
-                                    <div id="conversionChart" ></div>
+                                    <div id="conversionChart" class="text-center" ></div>
                                 </div>
                             </div>
 
