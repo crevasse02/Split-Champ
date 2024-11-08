@@ -89,48 +89,6 @@ $(document).ready(function () {
         $("#modalDetail").modal("show");
     });
 
-    // Toggle edit mode for form fields
-    // $(document).on("click", ".edit-button", function () {
-    //     const variantId = $(this).data("variant-id");
-    //     const form = $(`form[data-variant-id="${variantId}"]`);
-    //     const editButton = $(this);
-    //     const isEditing = editButton.text() === "Edit";
-    //     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
-
-    //     if (isEditing) {
-    //         // Enable fields for editing
-    //         form.find("input, select").prop("readonly", false).prop("disabled", false);
-    //         editButton.text("Save");
-    //     } else {
-    //         // Gather data for AJAX submission
-    //         const updatedData = {
-    //             variant_name: form.find(`#variant-name${variantId}`).val(),
-    //             url_variant: form.find(`#url-name${variantId}`).val(),
-    //             conversion_type: form.find(`#conversion-name${variantId}`).val(),
-    //             button_click_name: form.find(`#idorclass-name${variantId}`).val().replace(/^\./, ""), // Remove leading dot
-    //             submit_form_name: form.find(`#idorclass-name${variantId}`).val().replace(/^#/, ""), // Remove leading hash
-    //             _token: csrfToken // Add the CSRF token to the data
-    //         };
-
-    //         // AJAX request to save the updated data as an array
-    //         $.ajax({
-    //             url: '/variants/update', // Adjust to your API endpoint for bulk update
-    //             type: "POST",
-    //             data: { variantId, updatedData }, // Sending variant ID and updated data
-    //             success: function (response) {
-    //                 alert(response.success);
-
-    //                 // Reload the page to reflect changes
-    //                 location.reload();
-    //             },
-    //             error: function (error) {
-    //                 console.error(error);
-    //                 alert("Failed to update variant. Please try again.");
-    //             },
-    //         });
-    //     }
-    // });
-
     // Handle button clicks dynamically
     $(document).on("click", '[data-toggle="modal"]', function () {
         modalId = $(this).data("target").replace("#modal", "").trim();
