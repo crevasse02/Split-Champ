@@ -1,147 +1,143 @@
 $(document).ready(function () {
-    let areaChart; // Declare variable to hold the chart instance
+    let areaChart; // Variable for the main bar chart
+    let conversionChart; // Variable for the horizontal bar chart
     let selectedRow; // Variable to keep track of the selected row
 
     // Function to select the first row on initial load
     function selectFirstRow() {
-        const firstRow = $(".experiment-row").first(); // Get the first row
+        const firstRow = $(".experiment-row").first();
         if (firstRow.length) {
-            firstRow.addClass("selected-row"); // Add class to the first row
-            selectedRow = firstRow; // Update the selected row variable
-            const eksperimenId = firstRow.data("eksperimen-id"); // Get its eksperimenId
-            fetchData(eksperimenId); // Fetch data for the first row
+            firstRow.addClass("selected-row");
+            selectedRow = firstRow;
+            const eksperimenId = firstRow.data("eksperimen-id");
+            fetchData(eksperimenId);
         }
     }
 
-    // Function to fetch data and render the chart
+    // Function to fetch data and render charts
     function fetchData(eksperimenId) {
-        // Fetch data from the API endpoint
         fetch(`/api/get-variant/${eksperimenId}`)
             .then((response) => response.json())
             .then((data) => {
-                // Check if `variants` data is empty
                 if (!data || !data.variants || data.variants.length === 0) {
-                    // Clear the area chart and display "Data Not Found" message
-                    if (areaChart) {
-                        areaChart.destroy(); // Destroy any existing chart instance
-                    }
-                    $("#areaChart").html("<p>Data Not Found</p>"); // Display message
-                    return; // Exit the function
+                    if (areaChart) areaChart.destroy();
+                    if (conversionChart) conversionChart.destroy();
+                    $("#areaChart").html("<p>Data Not Found</p>");
+                    $("#conversionChart").html("<p>Data Not Found</p>");
+                    return;
                 } else {
-                    $("#areaChart").html(""); // Clear the chart container
+                    $("#areaChart").html("");
+                    $("#conversionChart").html("");
                 }
 
-                // Set up series data for each conversion type
+                // Prepare series data for the main bar chart
                 const seriesData = [
                     {
                         name: "Button Clicks",
-                        data: [
-                            ...data.variants.map(
-                                (variant) => variant.button_click || 0
-                            ),
-                            null,
-                        ], // Add null for last bar
+                        data: [...data.variants.map((variant) => variant.button_click || 0), null],
                     },
                     {
                         name: "Form Submits",
-                        data: [
-                            ...data.variants.map(
-                                (variant) => variant.form_submit || 0
-                            ),
-                            null,
-                        ], // Add null for last bar
+                        data: [...data.variants.map((variant) => variant.form_submit || 0), null],
                     },
                     {
                         name: "Slug Views (Variants)",
-                        data: [
-                            ...data.variants.map(
-                                (variant) => variant.view || 0
-                            ),
-                            null,
-                        ], // Add null for last bar
+                        data: [...data.variants.map((variant) => variant.view || 0), null],
                     },
                     {
                         name: "Domain View Count",
-                        data: Array(data.variants.length)
-                            .fill(null)
-                            .concat(data.experiment_view_count || 0), // Fill nulls, add count at end
+                        data: Array(data.variants.length).fill(null).concat(data.experiment_view_count || 0),
                     },
                 ];
 
-                // Destroy existing chart if it exists
-                if (areaChart) {
-                    areaChart.destroy();
-                }
-
-                // Initialize and render the bar chart
-                areaChart = new ApexCharts(
-                    document.querySelector("#areaChart"),
-                    {
-                        chart: {
-                            type: "bar",
-                            toolbar: {
-                                show: false, // Hide toolbar if not needed
-                            },
-                        },
-                        plotOptions: {
-                            bar: {
-                                borderRadius: 10,
-                                dataLabels: {
-                                    position: "top", // top, center, bottom
-                                },
-                            },
-                        },
-                        series: seriesData,
-                        xaxis: {
-                            categories: [
-                                ...data.variants.map(
-                                    (variant) => variant.variant_name
-                                ),
-                                "Domain View Count", // Add as separate x-axis category
-                            ],
-                        },
-                        yaxis: {
-                            title: {
-                                text: "Count",
-                            },
-                        },
-                        dataLabels: {
-                            enabled: true,
-                            formatter: (val) => (val ? val.toString() : ""),
-                            style: {
-                                fontSize: "16px",
-                            },
-                        },
-                        tooltip: {
-                            y: {
-                                formatter: (val) => `${val} interactions`, // Customize tooltip
-                            },
-                        },
-                        legend: {
-                            position: "right",
-                        },
-                    }
-                );
-
+                if (areaChart) areaChart.destroy();
+                areaChart = new ApexCharts(document.querySelector("#areaChart"), {
+                    chart: { type: "bar", toolbar: { show: false } },
+                    plotOptions: { bar: { borderRadius: 10, dataLabels: { position: "top" } } },
+                    series: seriesData,
+                    xaxis: {
+                        categories: [...data.variants.map((variant) => variant.variant_name), "Domain View Count"],
+                    },
+                    yaxis: { title: { text: "Count" } },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: (val) => (val ? val.toString() : ""),
+                        style: { fontSize: "16px" },
+                    },
+                    tooltip: { y: { formatter: (val) => `${val} interactions` } },
+                    legend: { position: "right" },
+                });
                 areaChart.render();
+
+                // Prepare data for the horizontal bar chart showing conversion rates
+                const conversionRates = data.variants.map((variant) => {
+                    const viewCount = variant.view || 1;
+                    const totalConversions = (variant.button_click || 0) + (variant.form_submit || 0);
+                    return (totalConversions / viewCount) * 100;
+                });
+
+                if (conversionChart) conversionChart.destroy();
+                conversionChart = new ApexCharts(document.querySelector("#conversionChart"), {
+                    chart: {
+                        type: "bar",
+                        toolbar: { show: false },
+                        height: '300px',
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: true,
+                            borderRadius: 5,
+                            dataLabels: {
+                                position: "center",
+                            },
+                        },
+                    },
+                    series: [{
+                        name: "Conversion Rate",
+                        data: conversionRates,
+                    }],
+                    xaxis: {
+                        categories: data.variants.map((variant) => variant.variant_name),
+                        title: {
+                            text: "Conversion Rate (%)",
+                        },
+                    },
+                    yaxis: {
+                        title: {
+                            text: "Variants",
+                        },
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: (val) => `${val.toFixed(1)}%`,
+                        style: {
+                            fontSize: '12px',
+                            colors: ['#fff'],
+                        },
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: (val) => `${val.toFixed(1)}% conversion rate`,
+                        },
+                    },
+                    legend: {
+                        show: false, // Hide legend as each bar is labeled
+                    },
+                });
+                conversionChart.render();
             })
             .catch((error) => console.error("Error fetching data:", error));
     }
 
-    // Listen for clicks on each experiment row
     $(".experiment-row").on("click", function () {
-        const eksperimenId = $(this).data("eksperimen-id"); // Get eksperimenId using jQuery
+        const eksperimenId = $(this).data("eksperimen-id");
 
-        // Change background color of the selected row
-        if (selectedRow) {
-            selectedRow.removeClass("selected-row"); // Remove class from previously selected row
-        }
-        $(this).addClass("selected-row"); // Add class to the clicked row
-        selectedRow = $(this); // Update the selected row
+        if (selectedRow) selectedRow.removeClass("selected-row");
+        $(this).addClass("selected-row");
+        selectedRow = $(this);
 
-        fetchData(eksperimenId); // Fetch data for the clicked row
+        fetchData(eksperimenId);
     });
 
-    // Select the first row on initial load
     selectFirstRow();
 });

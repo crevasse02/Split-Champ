@@ -80,6 +80,15 @@
 
                         <!-- Reports -->
                         <div class="col-lg-12">
+                            <div class="card" >
+                                <div class="card-body">
+                                    <h5 class="card-title">Conversion Percentage</h5>
+
+                                    <!-- Pie Chart -->
+                                    <div id="conversionChart" ></div>
+                                </div>
+                            </div>
+
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Reports Chart</h5>
