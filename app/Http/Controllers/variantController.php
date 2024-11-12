@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\ExperimentModel;
 use App\Models\VariantModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class variantController extends Controller
 {
@@ -11,7 +12,7 @@ class variantController extends Controller
 
     public function index()
     {
-        $data = ExperimentModel::all()->toArray();
+        $data = ExperimentModel::where('id_user', Auth::id())->get()->toArray();
         return view('form-variant', compact('data'));
         // var_dump($data);
     }

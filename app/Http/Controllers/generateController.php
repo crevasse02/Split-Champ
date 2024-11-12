@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ExperimentModel;
 use App\Models\VariantModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 class generateController extends Controller
@@ -13,7 +14,8 @@ class generateController extends Controller
     public function index()
     {
         $dataVariant = VariantModel::all();
-        $dataExperiment = ExperimentModel::paginate(10);
+        $currentId = Auth::user()->id;
+        $dataExperiment = ExperimentModel::where('id_user', $currentId)->paginate(10);
         return view('generate-code')->with([
             'dataVariant' => $dataVariant,
             'dataExperiment' => $dataExperiment,

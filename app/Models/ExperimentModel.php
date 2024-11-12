@@ -20,6 +20,7 @@ class ExperimentModel extends Model
         'eksperimen_name',
         'domain_name',
         'created_by',
+        'id_user'
     ];
 
     protected static function boot()

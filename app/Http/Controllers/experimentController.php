@@ -23,10 +23,10 @@ class experimentController extends Controller
                 'eksperimen_name' => 'required|string|max:255',
                 'domain_name' => 'required|string|max:255',
                 'created_by' => 'required|string|max:255',
+                'id_user' => 'required|string',
             ], [
                 'eksperimen_name.required' => 'Nama eksperimen wajib diisi.',
                 'domain_name.required' => 'Nama domain wajib diisi.',
-                'created_by.required' => 'Nama pembuat wajib diisi.',
             ]);
     
             // Trim 'domain_name' to remove 'https://', 'www', and trailing slashes

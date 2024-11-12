@@ -41,8 +41,10 @@ date_default_timezone_set('Asia/Jakarta');
                                         </div>
                                         <div class="col-md-4">
                                             <label for="created-by" class="form-label">Created By</label>
+                                            <input name="id_user" readonly type="text" class="form-control"
+                                                id="id_user" value="{{ Auth::user()->id }}" hidden>
                                             <input name="created_by" readonly type="text" class="form-control"
-                                                id="created-by" value="{{Auth::user()->name}}">
+                                                id="created-by" value="{{ Auth::user()->name }}">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="time-stamp" class="form-label">Time Stamp</label>

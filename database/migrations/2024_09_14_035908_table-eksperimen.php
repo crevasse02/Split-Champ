@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('eksperimen_name');
             $table->string('domain_name');
             $table->string('created_by');
+            $table->string('id_user');
             $table->integer('view')->default(0);
             $table->softDeletes(); // Adds the deleted_at column for soft deletes
             $table->timestamps();

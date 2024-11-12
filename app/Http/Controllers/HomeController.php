@@ -12,7 +12,9 @@ class HomeController extends Controller
     //
     public function index()
     {
-        $dataExperiment = ExperimentModel::paginate(10);
+        $currentId = Auth::user()->id;
+        $dataExperiment = ExperimentModel::where('id_user', $currentId)->paginate(10);
+
         return view('dashboard')->with([
             'dataExperiment' => $dataExperiment,
         ]);
