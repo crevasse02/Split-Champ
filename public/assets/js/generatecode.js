@@ -37,7 +37,7 @@ $(document).ready(function () {
                             <label for="url-name" class="col-form-label">URL</label>
                             <input type="text" class="form-control" id="url-name${
                                 variant.variant_id
-                            }" readonly value="${experiment.domain_name}/${
+                            }" readonly value="${experiment.domain_name.replace(/\/.*$/, '')}/${
                         variant.url_variant
                     }">
                         </div>
