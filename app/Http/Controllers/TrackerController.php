@@ -117,7 +117,7 @@ class TrackerController extends Controller
         }
 
         // Extract and clean slug
-        $slug = $request->input('slug');  
+        $slug = $request->input('slug');
         $token = $request->input('token');
 
         // Find eksperimen_id using the token
@@ -140,5 +140,18 @@ class TrackerController extends Controller
 
         // Respond with success
         return response()->json(['status' => 'success'], 200);
+    }
+
+    public function getDomainUrl($eksperimenId)
+    {
+        // Retrieve the view count from the ExperimentModel
+        $experiment = ExperimentModel::where('eksperimen_id', $eksperimenId)->first(['view']);
+
+        // Structure the response to include both variant data and experiment view count
+        $response = [
+            'domain_name' => $experiment ? $experiment->domain_name : 0,  // Default to 0 if experiment not found
+        ];
+
+        return response()->json($response);
     }
 }

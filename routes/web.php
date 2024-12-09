@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/tracker-api', [TrackerController::class, 'tracker']);
 Route::post('/view-api', [TrackerController::class, 'view']);
 Route::post('/base-view-api', [TrackerController::class, 'viewBaseUrl']);
+Route::get('/get-domain', [TrackerController::class, 'getDomainUrl']);
 
 
 

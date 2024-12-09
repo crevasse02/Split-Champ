@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/get-variant/{eksperimenId}', [HomeController::class, 'getVariantData']);
 
+
 Route::post('/store-experiment', [experimentController::class, 'store'])->name('store-experiment');
 
 // Variant Controllers Routes
