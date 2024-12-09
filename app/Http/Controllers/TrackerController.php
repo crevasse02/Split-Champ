@@ -145,9 +145,10 @@ class TrackerController extends Controller
     public function getDomainUrl($eksperimenId)
     {
         // Retrieve the view count from the ExperimentModel
-        $experiment = ExperimentModel::where('eksperimen_id', $eksperimenId)->first(['view']);
+        $experiment = ExperimentModel::where('eksperimen_id', $eksperimenId)->first(['domain_name']);
 
-        // Structure the response to include both variant data and experiment view count
+        // Structure the response to include both variant data and experiment view count\
+        // dd($experiment);
         $response = [
             'domain_name' => $experiment ? $experiment->domain_name : 0,  // Default to 0 if experiment not found
         ];
