@@ -374,7 +374,7 @@
 //           document.body.style.visibility = "visible";
 
 //           setTimeout(() => {
-//               window.location.href = selectedData.slug;
+//               window.location.href = 'https://'+selectedData.slug;
 //           }, 500);
 //       }, 1000);
 //   });
