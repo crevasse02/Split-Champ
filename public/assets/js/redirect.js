@@ -171,7 +171,7 @@ const redirectScript = `
 
                 console.log(domainName)
                 console.log(currentUrl)
-                if (currentUrl.includes(domainName)) {
+                if (currentUrl==domainName) {
                     sendBaseUrlViewData(domainName);
 
                     const selectedData =
