@@ -1,3 +1,203 @@
 const redirectScript = `
-document.addEventListener("DOMContentLoaded",function(){sessionStorage.getItem("hasRedirected")&&dataMapping.forEach(({selector:e,variant:t,slug:s})=>{let n=document.querySelectorAll(e);n.forEach(n=>{let o=!1,i=!1,a=()=>{let n=window.location.host+window.location.pathname;if(n.includes(s)){let o={url:n,selector:e,variant:t,token:token};(function e(t){fetch("https://split.esensigroup.com/tracker-api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)}).then(e=>e.json()).then(e=>console.log("Success:",e)).catch(e=>console.error("Error:",e))})(o),console.log("Data sent to API:",o)}else console.log("Current URL does not match slug:",s)},l=s+"_"+e+"_submitted";"FORM"===n.tagName?n.classList.contains("wpcf7-form")?(document.addEventListener("wpcf7mailsent",t=>{!t.target.matches(e)||o||sessionStorage.getItem(l)||(o=!0,a(),sessionStorage.setItem(l,"true"),console.log("Contact Form 7 sent successfully, data sent."))}),document.addEventListener("wpcf7invalid",t=>{t.target.matches(e)&&console.log("Contact Form 7 submission invalid, data not sent.")})):n.addEventListener("submit",async e=>{if(e.preventDefault(),!o&&!sessionStorage.getItem(l)){o=!0;try{let t=new FormData(n),s=await fetch(n.action,{method:"POST",body:t});s.ok?(a(),sessionStorage.setItem(l,"true"),console.log("Non-Contact Form 7 form submitted successfully, data sent.")):console.log("Form submission failed, data not sent.")}catch(i){console.error("Error submitting form:",i)}finally{o=!1}}}):n.addEventListener("click",()=>{i||sessionStorage.getItem(l)?console.log("Element already clicked in this session."):(i=!0,a(),sessionStorage.setItem(l,"true"),console.log("Non-form element clicked, data sent."))})})}),fetch("https://split.esensigroup.com/get-domain/"+token,{method:"GET",headers:{"Content-Type":"application/json"}}).then(e=>e.json()).then(e=>{let t=e.domain_name,s=window.location.host+window.location.pathname,n=s.replace("www.","").replace("http://","").replace("https://",""),o=t.replace("www.","").replace("http://","").replace("https://","");if(n.includes(o)){!function e(t){let s=t,n="baseUrl_viewDataSent";if(s&&"string"==typeof s&&(s=(s=s.replace("http://","").replace("https://","")).replace("www.","")),sessionStorage.getItem(n))console.log("View data already sent for the base URL in this session.");else{let o={slug:s,token:token};(function e(t){fetch("https://split.esensigroup.com/base-view-api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)}).then(e=>e.json()).then(e=>console.log("Success:",e)).catch(e=>console.error("Error:",e))})(o),sessionStorage.setItem(n,"true")}}(t);let i=dataMapping[Math.floor(Math.random()*dataMapping.length)],a=localStorage.getItem(i.slug+"_hits")?parseInt(localStorage.getItem(i.slug+"_hits")):0;a++,localStorage.setItem(i.slug+"_hits",a),sessionStorage.setItem("hasRedirected","true"),document.body.style.visibility="hidden",setTimeout(()=>{document.body.innerHTML='<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #fff;"><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExajFnazV4bnE2M3NzY2hxeDhzd3J2ODdxamE2dmNvdTU1bGZvNm9tNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oEjI6SIIHBdRxXI40/giphy.gif" /></div>',document.body.style.visibility="visible",setTimeout(()=>{window.location.href="https://"+i.slug},500)},1e3)}}).catch(e=>console.error("Error:",e))}),sessionStorage.getItem("hasRedirected")&&function e(){let t=window.location.host+window.location.pathname,s=dataMapping.find(e=>t.includes(e.slug));if(s){let n=s.slug+"_viewDataSent";if(sessionStorage.getItem(n))console.log("View data already sent for this user in this session.");else{let o={slug:s.slug,token:token};(function e(t){fetch("https://split.esensigroup.com/view-api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)}).then(e=>e.json()).then(e=>console.log("Success:",e)).catch(e=>console.error("Error:",e))})(o),sessionStorage.setItem(n,"true")}}else console.log("No matching URL found.")}();
+(function () {
+    const apiBaseUrl = "https://split.esensigroup.com";
+    const sessionKeys = new Set();
+
+    // Normalize URL by removing query parameters and trailing slashes
+    function normalizeUrl(url) {
+        return url
+            .replace(/(\?.*|\/$)/g, "")
+            .replace(/^https?:\/\//, "")
+            .replace("www.", "");
+    }
+
+    function fetchData(endpoint, data) {
+        return fetch(\`\${apiBaseUrl}\${endpoint}\`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('HTTP error!');
+                }
+                return response.json();
+            })
+            .catch((error) => console.error('Error', error));
+    }
+
+    function sendViewData(data) {
+        fetchData("/view-api", data);
+    }
+
+    function sendClickData(data) {
+        fetchData("/tracker-api", data);
+    }
+
+    function sendBaseViewData(data) {
+        fetchData("/base-view-api", data);
+    }
+
+    function sendBaseUrlViewData(baseUrl) {
+        const viewDataKey = \`\${baseUrl}_viewDataSent\`;
+
+        if (!sessionStorage.getItem(viewDataKey)) {
+            const viewData = { slug: baseUrl, token: token };
+            sendBaseViewData(viewData);
+            sessionStorage.setItem(viewDataKey, "true");
+        } else {
+            console.log("View data already sent for this session.");
+        }
+    }
+
+function setupClickListeners() {
+    const currentUrl = window.location.host + window.location.pathname;
+    const matchedData = dataMapping.find((data) => {
+        const normalizedCurrentUrl = normalizeUrl(currentUrl);
+        const normalizedSlug = normalizeUrl(data.slug);
+        return (
+            normalizedCurrentUrl === normalizedSlug ||
+            normalizedCurrentUrl.startsWith( \`\${normalizedSlug}/\`)
+        );
+    });
+
+    if (!matchedData) {
+        console.error("No matched data for current URL:", currentUrl);
+        return;
+    }
+
+    console.log("Matched Data:", matchedData);
+
+    const { selector, variant, slug } = matchedData;
+    const elements = document.querySelectorAll(selector);
+    const sessionKey = \`\${slug}_${selector}_submitted\`;
+
+    if (sessionKeys.has(sessionKey)) return; // Prevent duplicate listeners
+    sessionKeys.add(sessionKey);
+
+    let isSubmitting = false;
+
+    const sendData = () => {
+        if (isSubmitting || sessionStorage.getItem(sessionKey)) return;
+        isSubmitting = true;
+
+        const clickData = {
+            url: normalizeUrl(window.location.href),
+            selector,
+            variant,
+            token,
+        };
+        sendClickData(clickData);
+        sessionStorage.setItem(sessionKey, "true");
+        console.log("Data sent to API:", clickData);
+
+        setTimeout(() => (isSubmitting = false), 500); // Throttle
+    };
+
+    elements.forEach((element) => {
+        if (element.tagName === "FORM") {
+            if (element.classList.contains("wpcf7-form")) {
+                document.addEventListener("wpcf7mailsent", (event) => {
+                    if (event.target.matches(selector) && !sessionStorage.getItem(sessionKey)) {
+                        sendData();
+                    }
+                });
+            } else {
+                element.addEventListener("submit", async (event) => {
+                    event.preventDefault();
+                    if (!sessionStorage.getItem(sessionKey)) {
+                        try {
+                            const formData = new FormData(element);
+                            const response = await fetch(element.action, {
+                                method: "POST",
+                                body: formData,
+                            });
+                            if (response.ok) {
+                                sendData();
+                            } else {
+                                console.error("Form submission failed.");
+                            }
+                        } catch (error) {
+                            console.error("Error submitting form:", error);
+                        }
+                    }
+                });
+            }
+        } else {
+            element.addEventListener("click", () => {
+                if (!sessionStorage.getItem(sessionKey)) {
+                    sendData();
+                } else {
+                    console.log("Element already clicked in this session.");
+                }
+            });
+        }
+    });
+}
+
+    function checkCurrentUrl() {
+        const normalizedUrl = normalizeUrl(window.location.href);
+        const matchedData = dataMapping.find((data) =>
+            normalizedUrl.includes(normalizeUrl(data.slug))
+        );
+
+        if (matchedData) {
+            const viewDataKey = \`\${matchedData.slug}_viewDataSent\`;
+            if (!sessionStorage.getItem(viewDataKey)) {
+                const viewData = {
+                    slug: matchedData.slug,
+                    token: token,
+                };
+                sendViewData(viewData);
+                sessionStorage.setItem(viewDataKey, "true");
+            } else {
+                console.log("View data already sent for this session.");
+            }
+        } else {
+            console.log("No matching URL found.");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch(\`\${apiBaseUrl}/get-domain/${token}\`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        })
+            .then((response) => response.json())
+            .then((apiData) => {
+                const domainName = normalizeUrl(apiData.domain_name);
+                const currentUrl = normalizeUrl(window.location.href);
+
+                if (currentUrl === domainName) {
+                    sendBaseUrlViewData(domainName);
+
+                    const selectedData =
+                        dataMapping[Math.floor(Math.random() * dataMapping.length)];
+
+                    let tempSlugHits = localStorage.getItem(\`\${selectedData.slug}_hits\`) || 0;
+                    tempSlugHits++;
+                    localStorage.setItem(\`\${selectedData.slug}_hits\`, tempSlugHits);
+
+                    sessionStorage.setItem("hasRedirected", "true");
+
+                    document.body.style.visibility = "hidden";
+                    setTimeout(() => {
+                        document.body.innerHTML =
+                            '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #fff;"><img src="https://i.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" /></div>';
+                        document.body.style.visibility = "visible";
+
+                        setTimeout(() => {
+                            window.location.href = \`\https://${selectedData.slug}\`;
+                        }, 500);
+                    }, 1000);
+                }
+            })
+            .catch((error) => console.error("Error fetching domain:", error));
+
+        if (sessionStorage.getItem("hasRedirected")) {
+            checkCurrentUrl();
+            setupClickListeners();
+        }
+    });
+})();
 `;
